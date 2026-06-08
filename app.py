@@ -24,27 +24,115 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import streamlit as st
 
-st.set_page_config(page_title="VN AIDEOM-VN", page_icon="🇻🇳",
-                   layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="AIDEOM-VN · Blueprint", page_icon="◈",
+                   layout="wide", initial_sidebar_state="collapsed")
 
 st.markdown(
     """
     <style>
-      .block-container {padding-top: 1.4rem; padding-bottom: 2rem;}
-      h1 {font-size: 2.2rem !important; line-height: 1.15;}
-      .intro-line {color:#374151; font-size:1.02rem; margin: 2px 0 10px 0;}
-      .hero {background: linear-gradient(120deg,#dbe4ff 0%,#e9d8fd 45%,#d7f5e3 100%);
-        border-radius: 18px; padding: 26px 30px; margin-bottom: 16px;}
-      .hero h1 {margin: 0 0 4px 0;}
-      .hero p {margin: 6px 0; color:#374151;}
-      .pill {display:inline-block; background:#ffffffcc; border:1px solid #e5e7eb;
-        border-radius: 999px; padding:6px 14px; margin:4px 6px 0 0; font-size:0.85rem;}
-      .sb-id {background:#f1f5f9; border-radius:10px; padding:12px 14px;
-        font-size:0.85rem; line-height:1.5; margin-top:8px;}
-      .stTabs [data-baseweb="tab-list"] {gap: 18px;}
-      .stTabs [data-baseweb="tab"] {font-size:0.95rem;}
-      div[data-testid="stMetricValue"] {font-size:1.7rem;}
-      .small-note {color:#6b7280; font-size:0.85rem;}
+      @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+      :root{
+        --bg:#0b1020; --bg2:#121a30; --panel:#16203a; --line:#26324f;
+        --cyan:#38e1c6; --cyan-d:#1c9d89; --amber:#f2b134; --txt:#dce6f7;
+        --txt-soft:#8da2c4; --violet:#8b7bff;
+      }
+      .stApp{background:
+        radial-gradient(900px 500px at 80% -10%, rgba(56,225,198,.10), transparent 60%),
+        radial-gradient(700px 500px at 0% 0%, rgba(139,123,255,.10), transparent 55%),
+        var(--bg);}
+      /* lưới blueprint mờ */
+      .stApp:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+        background-image:linear-gradient(rgba(38,50,79,.35) 1px,transparent 1px),
+          linear-gradient(90deg,rgba(38,50,79,.35) 1px,transparent 1px);
+        background-size:34px 34px;}
+      .block-container{padding-top:.6rem;padding-bottom:2rem;position:relative;z-index:1;max-width:1180px;}
+      html,body,[class*="css"]{font-family:'Space Grotesk',sans-serif;color:var(--txt);}
+      h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif;color:var(--txt);letter-spacing:-.3px;}
+      h1{font-size:2rem !important;line-height:1.12;font-weight:700;}
+      p,li,span,div,label{color:var(--txt);}
+      .mono{font-family:'IBM Plex Mono',monospace;}
+
+      /* ===== TOPBAR ===== */
+      .neo-top{position:sticky;top:0;z-index:30;margin:-0.6rem -1rem 14px -1rem;
+        background:rgba(11,16,32,.92);backdrop-filter:blur(8px);
+        border-bottom:1px solid var(--line);padding:12px 22px 0 22px;}
+      .neo-bar{display:flex;align-items:center;gap:14px;max-width:1180px;margin:0 auto;}
+      .neo-logo{width:34px;height:34px;border:1.5px solid var(--cyan);border-radius:8px;
+        display:grid;place-items:center;color:var(--cyan);font-size:18px;font-weight:700;
+        box-shadow:0 0 18px rgba(56,225,198,.4);}
+      .neo-ti{font-family:'IBM Plex Mono';font-weight:600;font-size:1rem;color:var(--txt);}
+      .neo-ti b{color:var(--cyan);}
+      .neo-ti small{display:block;font-size:.62rem;letter-spacing:3px;color:var(--txt-soft);text-transform:uppercase;}
+
+      /* radio ngang = topbar nav */
+      div[role="radiogroup"]{flex-direction:row !important;flex-wrap:wrap;gap:6px !important;}
+      div[role="radiogroup"] label{
+        background:var(--panel);border:1px solid var(--line);border-radius:8px;
+        padding:6px 12px !important;margin:0 !important;cursor:pointer;transition:.15s;}
+      div[role="radiogroup"] label:hover{border-color:var(--cyan-d);}
+      div[role="radiogroup"] label p{font-size:.82rem !important;font-weight:500;color:var(--txt-soft) !important;}
+      div[role="radiogroup"] label[data-checked="true"]{background:var(--cyan);border-color:var(--cyan);}
+      div[role="radiogroup"] label[data-checked="true"] p{color:#06231e !important;font-weight:700;}
+      div[role="radiogroup"] [data-testid="stMarkdownContainer"]{margin:0;}
+      div[role="radiogroup"]>label>div:first-child{display:none;} /* ẩn chấm radio */
+
+      /* ===== HERO ===== */
+      .hero{background:linear-gradient(135deg,var(--panel),rgba(22,32,58,.4));
+        border:1px solid var(--line);border-left:4px solid var(--cyan);
+        border-radius:14px;padding:26px 30px;margin-bottom:16px;position:relative;overflow:hidden;}
+      .hero:after{content:"◈";position:absolute;right:18px;top:6px;font-size:120px;color:var(--cyan);opacity:.05;}
+      .hero h1{margin:0 0 6px;}
+      .hero h1 em{color:var(--cyan);font-style:normal;}
+      .hero p{color:var(--txt-soft);margin:6px 0;max-width:680px;}
+      .pill{display:inline-block;background:rgba(56,225,198,.08);border:1px solid var(--cyan-d);
+        color:var(--cyan);border-radius:6px;padding:5px 12px;margin:4px 6px 0 0;
+        font-family:'IBM Plex Mono';font-size:.76rem;}
+      .intro-line{color:var(--txt-soft);font-size:1rem;margin:2px 0 10px;
+        border-left:2px solid var(--amber);padding-left:12px;}
+
+      /* card mục lục bài */
+      .sb-id{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+        padding:12px 14px;font-size:.84rem;line-height:1.6;margin-top:8px;color:var(--txt-soft);}
+      .sb-id b{color:var(--cyan);}
+
+      /* ===== TABS (5 trang) ===== */
+      .stTabs [data-baseweb="tab-list"]{gap:4px;background:var(--bg2);padding:5px;border-radius:11px;
+        border:1px solid var(--line);}
+      .stTabs [data-baseweb="tab"]{font-family:'IBM Plex Mono';font-size:.84rem;font-weight:500;
+        border-radius:8px;padding:7px 14px;color:var(--txt-soft);}
+      .stTabs [aria-selected="true"]{background:var(--cyan) !important;color:#06231e !important;font-weight:600;}
+
+      /* ===== TABLES ===== */
+      [data-testid="stTable"],.stDataFrame{background:var(--panel);border:1px solid var(--line);border-radius:10px;}
+      thead tr th{background:var(--bg2) !important;color:var(--cyan) !important;
+        font-family:'IBM Plex Mono';font-size:.78rem !important;text-transform:uppercase;letter-spacing:.5px;}
+      tbody tr td{color:var(--txt) !important;}
+
+      /* ===== METRICS ===== */
+      [data-testid="stMetric"]{background:var(--panel);border:1px solid var(--line);
+        border-top:3px solid var(--amber);border-radius:11px;padding:12px 16px;}
+      [data-testid="stMetricLabel"] p{color:var(--txt-soft) !important;font-family:'IBM Plex Mono';
+        font-size:.72rem !important;text-transform:uppercase;letter-spacing:.6px;}
+      div[data-testid="stMetricValue"]{font-size:1.6rem;font-family:'Space Grotesk';
+        font-weight:700;color:var(--txt);}
+      [data-testid="stMetricDelta"]{color:var(--cyan) !important;}
+
+      /* callout */
+      .stAlert{background:var(--panel) !important;border:1px solid var(--line) !important;
+        border-left:4px solid var(--cyan) !important;border-radius:0 10px 10px 0;}
+      .stAlert p{color:var(--txt) !important;}
+
+      /* sliders */
+      .stSlider [data-baseweb="slider"] div[role="slider"]{background:var(--cyan);}
+      [data-testid="stExpander"]{background:var(--panel);border:1px solid var(--line);border-radius:10px;}
+
+      hr{border-color:var(--line);}
+      .small-note{color:var(--txt-soft);font-size:.84rem;}
+      ::-webkit-scrollbar{height:8px;width:8px;}
+      ::-webkit-scrollbar-thumb{background:var(--cyan-d);border-radius:6px;}
+      ::-webkit-scrollbar-track{background:var(--bg2);}
+
+      .stApp [data-testid="stHeader"]{background:transparent;}
     </style>
     """,
     unsafe_allow_html=True,
@@ -108,6 +196,10 @@ def show_fig(fig):
 
 
 def page_title(emoji, title, name=None):
+    st.markdown(
+        f"<div style='font-family:IBM Plex Mono;color:var(--amber);font-size:.8rem;"
+        f"letter-spacing:2px;text-transform:uppercase;margin-bottom:2px'>"
+        f"▸ MODULE {name or ''}</div>", unsafe_allow_html=True)
     st.markdown(f"# {emoji} {title}")
 
 
@@ -148,24 +240,35 @@ PAGES = [
     "🧩 Bài 12 — AIDEOM tích hợp",
 ]
 
-with st.sidebar:
-    st.markdown("### 🇻🇳 VN AIDEOM-VN")
-    st.caption("Mô hình ra quyết định phát triển kinh tế Việt Nam trong kỉ nguyên AI")
-    st.markdown("**Chọn bài**")
-    page = st.radio("Chọn bài", PAGES, label_visibility="collapsed")
-    # Khu vực tham số riêng cho từng bài (các page_* sẽ ghi vào SB)
+# Topbar thương hiệu
+st.markdown(
+    """
+    <div class="neo-top"><div class="neo-bar">
+      <div class="neo-logo">◈</div>
+      <div class="neo-ti">AIDEOM·<b>VN</b><small>Decision Blueprint</small></div>
+    </div></div>
+    """,
+    unsafe_allow_html=True,
+)
+
+# Thanh chọn bài (radio ngang -> trông như topbar nav)
+page = st.radio("nav", PAGES, horizontal=True, label_visibility="collapsed")
+
+# Khu tham số: thay vì sidebar, đặt trong expander ngay dưới topbar
+_sb_exp = st.expander("⚙️  Tham số mô hình & thông tin", expanded=False)
+with _sb_exp:
     SB = st.container()
-    st.markdown("---")
     st.markdown(
         """
         <div class="sb-id">
-        <b>Họ và tên:</b> Vũ Công Minh<br>
-        <b>Mã sinh viên:</b> 23051329<br>
+        <b>Họ và tên:</b> Vũ Công Minh &nbsp;·&nbsp;
+        <b>Mã sinh viên:</b> 23051329 &nbsp;·&nbsp;
         <b>Bài tập lớn:</b> Các mô hình ra quyết định
         </div>
         """,
         unsafe_allow_html=True,
     )
+st.write("")
 
 
 # ============================================================================
@@ -2418,4 +2521,4 @@ except Exception as e:
     st.exception(e)
 
 st.markdown("---")
-st.caption("VN AIDEOM-VN • Vũ Công Minh – 23051329 • Bài tập lớn: Các mô hình ra quyết định")
+st.markdown("<div class=\"small-note\" style=\"text-align:center;font-family:IBM Plex Mono\">◈ AIDEOM-VN · Vũ Công Minh · 23051329 · Các mô hình ra quyết định</div>", unsafe_allow_html=True)
